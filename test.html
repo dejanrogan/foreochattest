@@ -1,0 +1,206 @@
+<style type='text/css'>
+    .sidebarHeader[embeddedService-chatHeader_chatHeader] {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    padding: 0 14px;
+    height: 100%;
+    border-bottom-style: solid;
+    border-color: #D7D7D7;
+    border-width: 1px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    }
+  
+    .embeddedServiceSidebarForm .fieldList {
+    margin: 12px 24px 0 12px;
+    padding: 0 0 15px;
+    display: grid;
+    width: auto;
+    }
+  
+    .embeddedServiceSidebarFormField.inputSplitName {
+    width: calc(100% - 12px);
+    display: inline-block;
+    vertical-align: top;
+    }
+  
+    .embeddedServiceSidebarFormField .slds-style-inputtext {
+    display: table-row;
+    line-height: 300px;
+    box-sizing: border-box;
+    box-shadow: none;
+    border: none;
+    border-bottom: solid 1px;
+    border-color: #D7D7D7;
+    border-radius: 0px;
+    }
+  
+    .embeddedServiceLiveAgentStateChatAvatar.isLightningOutContext .agentIconColor0 {
+    /* background-color: var(--lwc-colorBrandSecondaryLuminance0,#313F49); */
+    }
+  
+    .embeddedServiceLiveAgentStateChatItem .isLightningOutContext .avatar {
+    position: absolute;
+    bottom: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50px;
+    background-size: cover;
+    border: none;
+    float: left;
+    margin: 0 14px 14px 0;
+    background-color: #EF508C;
+    }
+  
+    .embeddedServiceSidebarMinimizedDefaultUI .content {
+        color: #313F49;
+    }
+  
+    .embeddedServiceIcon svg {
+        fill: #313F49;
+    }
+  
+  	.embeddedServiceHelpButton .helpButton .uiButton {
+		background-color: #313F49;
+		font-family: "Salesforce Sans", sans-serif;
+	}
+  
+	.embeddedServiceHelpButton .helpButton .uiButton:focus {
+		outline: 1px solid #313F49;
+	}
+  
+	@font-face {
+		font-family: 'Salesforce Sans';
+		src: url('https://c1.sfdcstatic.com/etc/clientlibs/sfdc-aem-master/clientlibs_base/fonts/SalesforceSans-Regular.woff') format('woff'),
+		url('https://c1.sfdcstatic.com/etc/clientlibs/sfdc-aem-master/clientlibs_base/fonts/SalesforceSans-Regular.ttf') format('truetype');
+	}
+</style>
+
+<script type='text/javascript' src='https://service.force.com/embeddedservice/5.0/esw.min.js'></script>
+<script type='text/javascript'>
+	var initESW = function(gslbBaseURL) {
+		embedded_svc.settings.displayHelpButton = true; //Or false
+		embedded_svc.settings.language = ''; //For example, enter 'en' or 'en-US'
+
+		embedded_svc.settings.defaultMinimizedText = ''; //(Defaults to Chat with an Expert)
+		//embedded_svc.settings.disabledMinimizedText = '...'; //(Defaults to Agent Offline)
+
+		//embedded_svc.settings.loadingText = ''; //(Defaults to Loading)
+		//embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Sets the domain for your deployment so that visitors can navigate subdomains during a chat session)
+
+		// Settings for Chat
+		//embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+			// Dynamically changes the button ID based on what the visitor enters in the pre-chat form.
+			// Returns a valid button ID.
+		//};
+		//embedded_svc.settings.prepopulatedPrechatFields = {}; //Sets the auto-population of pre-chat form fields
+		//embedded_svc.settings.fallbackRouting = []; //An array of button IDs, user IDs, or userId_buttonId
+		//embedded_svc.settings.offlineSupportMinimizedText = '...'; //(Defaults to Contact Us)
+
+		embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+		embedded_svc.settings.entryFeature = 'LiveAgent';
+		
+	embedded_svc.settings.extraPrechatFormDetails = [
+	  {"label": "Site URL",
+	   "value": window.location.href,
+	   "displayToAgent": true,
+	   "transcriptFields": ["Chat_Start_URL__c"]
+	  },
+      {"label":"Last Name",
+        "transcriptFields": ["Last_Name__c"]
+      },
+      {"label":"First Name",
+        "transcriptFields": ["First_Name__c"]
+      },
+      {"label":"Email",
+        "transcriptFields": ["Email__c"]
+      },
+      {"label":"Origin",
+        "value": "Chat - Web"
+      },
+      {"label":"Subject",
+        "value": "Issue from Chat - Web"
+      }];
+
+    embedded_svc.settings.extraPrechatInfo = [{
+      "entityFieldMaps":[{
+        "doCreate":false,
+        "doFind":true,
+        "fieldName":"LastName",
+        "isExactMatch":true,
+        "label":"Last Name"
+      },{
+        "doCreate":false,
+        "doFind":true,
+        "fieldName":"FirstName",
+        "isExactMatch":true,
+        "label":"First Name"
+      }, {
+        "doCreate":false,
+        "doFind":true,
+        "fieldName":"Email",
+        "isExactMatch":true,
+        "label":"Email"
+      }],
+      "entityName":"Contact",
+      "saveToTranscript":"Contact",
+      "showOnCreate":true
+    },{
+      "entityName": "Case",
+      "showOnCreate": true,
+      "saveToTranscript": "CaseId",
+      "entityFieldMaps": [{
+        "isExactMatch": false,
+        "fieldName": "Subject",
+        "doCreate": true,
+        "doFind": false,
+        "label": "Subject"
+      }, {
+        "isExactMatch": false,
+        "fieldName": "Origin",
+        "doCreate": true,
+        "doFind": false,
+        "label": "Origin",
+
+      }]
+    }];
+
+
+		embedded_svc.init(
+			'https://foreoab.my.salesforce.com',
+			'https://foreochat.secure.force.com/liveAgentSetupFlow',
+			gslbBaseURL,
+			'00D09000007SUVp',
+			'Chat_Agent',
+			{
+				baseLiveAgentContentURL: 'https://c.la3-c2-fra.salesforceliveagent.com/content',
+				deploymentId: '57209000000LbPm',
+				buttonId: '57309000000LcKM',
+				baseLiveAgentURL: 'https://d.la3-c2-fra.salesforceliveagent.com/chat',
+				eswLiveAgentDevName: 'E Chat_Agents',
+				isOfflineSupportEnabled: false
+			}
+		);
+	};
+
+	if (!window.embedded_svc) {
+		var s = document.createElement('script');
+		s.setAttribute('src', 'https://foreoab.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+		s.onload = function() {
+			initESW(null);
+		};
+		document.body.appendChild(s);
+	} else {
+		initESW('https://service.force.com');
+	}
+</script>
+
+<body>
+
+Ovo je neki tekst
+
+</body>
